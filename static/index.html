@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PyZdns</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+
+<div class="container" id="app">
+    <nav aria-label="breadcrumb ">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">御信科技</a></li>
+            <li class="breadcrumb-item active" aria-current="page">DNS扫描</li>
+        </ol>
+    </nav>
+    <div class="card text-white bg-dark mb-3">
+        <div class="card-header">
+            任务列表
+        </div>
+        <div class="card-body">
+
+            <table class="table table-dark">
+                <thead>
+                <tr>
+                    <th scope="col">域名</th>
+
+                    <th scope="col">优先级</th>
+                    <th scope="col">线程数</th>
+                    <th scope="col">添加时间</th>
+                    <th scope="col">状态</th>
+                    <th scope="col">耗时</th>
+                    <th scope="col">结果数</th>
+
+                    <th scope="col">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr v-for="task in all_tasks">
+                    <th scope="row">{{ task.domain }}</th>
+                    <th scope="row">{{ task.priority }}</th>
+                    <td>{{ task.threads }}</td>
+                    <td>{{ task.add_time }}</td>
+                    <td>{{ task.status }}</td>
+                    <td>{{ task.used_time }}</td>
+                    <td>{{ task.lines }}</td>
+
+                    <td v-if="task.type == 2">
+                        <button type="button" v-on:click="download(task.domain)" class="btn btn-primary">下载</button>
+                    </td>
+                    <td v-if="task.type == 1">
+                        <button type="button" class="btn btn-secondary" disabled>等待</button>
+                    </td>
+                    <td v-if="task.type == 0">
+                        <button type="button" v-on:click="del_task(task.domain)" class="btn btn-danger">删除</button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+    <br/>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">添加任务</h5>
+
+
+            <div class="form-group">
+                <label for="domain">域名</label>
+                <input type="text" v-model="domain" class="form-control" id="domain" aria-describedby="emailHelp"
+                       placeholder="Enter domain">
+
+            </div>
+            <div class="form-group">
+                <label for="threads">线程数</label>
+                <input type="number" v-model="threads" class="form-control" id="threads" placeholder="1000">
+            </div>
+            <div class="form-group">
+                <label for="priority">优先级</label>
+                <input type="number" v-model="priority" class="form-control" id="priority" placeholder="10">
+            </div>
+            <div class="form-group form-check">
+                <input type="radio" checked class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">过滤泛解析</label>
+            </div>
+            <button type="button" v-on:click="add_task()" class="btn btn-primary">Submit</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="/static/layer/layer.js"></script>
+
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            domain: 'qq.com',
+            threads: '1000',
+            priority: '1',
+            all_tasks: []
+        },
+        created: function () {
+            var self = this;
+            url = '/get_all_tasks'
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (resp) {
+                    self.all_tasks = $.parseJSON(resp);
+                    console.log(this.all_tasks);
+
+                }
+            })
+        },
+        methods: {
+            add_task: function () {
+                //发送get请求
+                url = '/add_task?domain=' + this.domain + '&threads=' + this.threads + '&priority=' + this.priority;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function (resp) {
+                        layer.msg($.parseJSON(resp).msg);
+                    }
+                });
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            },
+            del_task: function (domain) {
+                url = '/delete_task?domain=' + domain;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function (resp) {
+                        layer.msg($.parseJSON(resp).msg);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 500)
+                    }
+                })
+            },
+            download: function (domain) {
+                url = '/static/result/' + domain + '.txt';
+                window.open(url, "_blank");
+
+            }
+
+        }
+    })
+</script>
+</body>
+</html>

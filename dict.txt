@@ -1,0 +1,7 @@
+www
+user
+login
+id
+qzone
+blog
+shop
