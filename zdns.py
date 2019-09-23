@@ -21,7 +21,7 @@ class zdns:
         self.dict_path = "dict.txt" #字典路径
         self.domain_dict_save_path = "static/dict"
         self.result_save_path = "static/result"
-        self.zdns_path = '/Users/lixin/goproject/src/github.com/zmap/zdns/zdns/zdns'
+        self.zdns_path = '/usr/local/go/bin/src/github.com/zmap/zdns/zdns/zdns'
         if os.path.exists(self.domain_dict_save_path) == False:
             os.mkdir(self.domain_dict_save_path)
 
@@ -225,4 +225,4 @@ def get_all_tasks():
     return json.dumps(z.get_all_tasks())
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0' ,port=8080)
+    app.run(debug=True, host='0.0.0.0' ,port=5000)
