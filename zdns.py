@@ -115,6 +115,7 @@ class zdns:
             commands = '{} A -input-file={} --threads={} | sed -e /{}/g | grep -E "NOERROR" > {}'.format(self.zdns_path,domain_dict_path,threads,universal_ip,result_path)
         else:
             commands = '{} A -input-file={} --threads={} | grep -E "NOERROR" > {}'.format(self.zdns_path,domain_dict_path,threads,result_path)
+        print(commands)
         self.shell_exec(commands)
         self.current_status = 0
     def submit_task(self,task):
