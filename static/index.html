@@ -47,11 +47,8 @@
                     <td>{{ task.used_time }}</td>
                     <td>{{ task.lines }}</td>
 
-                    <td v-if="task.type == 2">
-                        <button type="button" v-on:click="download(task.domain)" class="btn btn-primary">下载</button>
-                    </td>
-                    <td v-if="task.type == 1">
-                        <button type="button" class="btn btn-secondary" disabled>等待</button>
+                    <td v-if="task.type > 0">
+                        <button type="button" v-on:click="download(task.domain)" class="btn btn-primary">查看</button>
                     </td>
                     <td v-if="task.type == 0">
                         <button type="button" v-on:click="del_task(task.domain)" class="btn btn-danger">删除</button>

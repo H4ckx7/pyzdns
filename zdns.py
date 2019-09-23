@@ -81,7 +81,8 @@ class zdns:
                 'domain':domain,
                 'threads':threads,
                 'priority':priority,
-                'add_time':self.get_time()
+                'add_time':self.get_time(),
+                'add_time_int':time.time()
             })
             return {
                     'status': True,
@@ -158,7 +159,7 @@ class zdns:
         try:
             file_path = self.result_save_path + "/" + domain + ".txt"
             result = self.shell_exec("wc -l " + file_path)
-            return result.split(" ")[7]
+            return result.split(" ")[0]
         except Exception as e:
             self.save_logs("error", "getLines_except:" + str(e))
             return 0
@@ -175,7 +176,7 @@ class zdns:
         for task in self.processing_task_list:
             task['status'] = "运行中"
             task['lines'] = self.getLines(task['domain'])
-            task['used_time'] = round(time.time() - task['add_time'],2)
+            task['used_time'] = round(time.time() - task['add_time_int'],2)
             task['type'] = 1
             all_task.append(task)
 
@@ -224,4 +225,4 @@ def get_all_tasks():
     return json.dumps(z.get_all_tasks())
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='0.0.0.0' ,port=8080)
